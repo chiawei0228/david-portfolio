@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Jia | AI-Powered Sales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-blue: #0066ff;
+            --dark-bg: #050508;
+            --grid-color: rgba(0, 243, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* 动态网格背景 */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* 扫描线效果 */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 243, 255, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* 霓虹发光文字 */
+        .neon-text {
+            text-shadow: 
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan);
+        }
+
+        .neon-purple {
+            text-shadow: 
+                0 0 10px var(--neon-purple),
+                0 0 20px var(--neon-purple),
+                0 0 40px var(--neon-purple);
+        }
+
+        /* 全息卡片效果 */
+        .holo-card {
+            background: rgba(10, 10, 20, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 243, 255, 0.1),
+                inset 0 0 20px rgba(0, 243, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holo-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-cyan), transparent, var(--neon-purple));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .holo-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 数字身份展示 - 替代头像 */
+        .digital-identity {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        .orbit-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-duration: 20s;
+        }
+
+        .orbit-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            animation-duration: 15s;
+            animation-direction: reverse;
+            border-color: rgba(188, 19, 254, 0.3);
+        }
+
+        .orbit-ring:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            animation-duration: 10s;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .core-data {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .data-matrix {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-cyan);
+            opacity: 0.6;
+            position: absolute;
+            animation: dataRain 3s linear infinite;
+        }
+
+        @keyframes dataRain {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+
+        /* 二进制背景 */
+        .binary-bg {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: rgba(0, 243, 255, 0.1);
+            line-height: 1.5;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* 故障艺术效果 */
+        .glitch {
+            position: relative;
+            animation: glitch-skew 1s infinite;
+        }
+
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-2deg); }
+            40% { transform: skew(2deg); }
+            60% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+            color: var(--neon-cyan);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-anim2 3s infinite linear alternate-reverse;
+            color: var(--neon-purple);
+            z-index: -2;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, -2px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 2px); }
+            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 2px); }
+            100% { clip-path: inset(30% 0 20% 0); transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 2px); }
+            20% { clip-path: inset(30% 0 20% 0); transform: translate(-2px, -2px); }
+            40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 2px); }
+            80% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -2px); }
+            100% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 2px); }
+        }
+
+        /* 终端风格时间轴 */
+        .terminal-line {
+            border-left: 2px solid var(--neon-cyan);
+            padding-left: 20px;
+            position: relative;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-line::before {
+            content: '>';
+            position: absolute;
+            left: -8px;
+            color: var(--neon-cyan);
+            background: var(--dark-bg);
+        }
+
+        .terminal-prompt {
+            color: var(--neon-cyan);
+        }
+
+        .terminal-command {
+            color: #fff;
+        }
+
+        .terminal-output {
+            color: #888;
+            margin-left: 20px;
+        }
+
+        /* AI芯片风格技能条 */
+        .ai-skill-bar {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-skill-fill {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            box-shadow: 0 0 10px var(--neon-cyan);
+            position: relative;
+        }
+
+        .ai-skill-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-20px); }
+            100% { transform: translateX(20px); }
+        }
+
+        /* 导航栏 */
+        .cyber-nav {
+            background: rgba(5, 5, 8, 0.9);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 按钮样式 */
+        .cyber-btn {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .cyber-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-cyan);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- 视觉效果层 -->
+    <div class="cyber-grid"></div>
+    <div class="scanline"></div>
+
+    <!-- 导航 -->
+    <nav class="fixed top-0 w-full z-50 cyber-nav px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="font-mono text-xl font-bold neon-text">Who Am I</div>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex space-x-8 text-sm font-mono">
+                    <a href="#profile" class="hover:text-cyan-400 transition-colors" data-i18n="nav_profile">[01] 身份识别</a>
+                    <a href="#timeline" class="hover:text-cyan-400 transition-colors" data-i18n="nav_timeline">[02] 执行日志</a>
+                    <a href="#achievements" class="hover:text-cyan-400 transition-colors" data-i18n="nav_achievements">[03] 战绩数据</a>
+                    <a href="#ai-lab" class="hover:text-cyan-400 transition-colors" data-i18n="nav_ailab">[04] AI实战记录</a>
+                </div>
+                <button onclick="toggleLanguage()" class="px-3 py-1 border border-cyan-400 text-cyan-400 rounded text-xs font-mono hover:bg-cyan-400 hover:text-black transition-all" id="lang-toggle">
+                    EN
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - 数字身份展示 -->
+    <section id="profile" class="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
+        <!-- 二进制背景装饰 -->
+        <div class="binary-bg top-20 left-10 opacity-20">
+            01001000 01100101 01101100 01101100 01101111<br>
+            01010111 01101111 01110010 01101100 01100100<br>
+            01010011 01100001 01101100 01100101 01110011
+        </div>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- 左侧：文字 -->
+            <div class="space-y-6">
+                <div class="font-mono text-sm text-cyan-400 mb-4 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    SYSTEM.ONLINE
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                    <span class="block text-gray-500 text-2xl md:text-3xl font-mono mb-2">IDENTITY: STRATEGIC_KAM</span>
+                    <span class="block glitch" data-text="万米高空服务者" data-i18n="hero_title">万米高空服务者</span>
+                    <span class="block text-cyan-400 mt-2" data-i18n="hero_subtitle1">→ 互联网销售</span>
+                    <span class="block text-purple-400 mt-2" data-i18n="hero_subtitle2">→ AI应用探索者</span>
+                </h1>
+
+                <div class="holo-card rounded-lg p-4 font-mono text-sm">
+                    <div class="text-gray-500 mb-2" data-i18n="hero_params">// 核心参数</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <span class="text-cyan-400">EXP:</span>
+                            <span class="text-white">10Y+</span>
+                        </div>
+                        <div>
+                            <span class="text-cyan-400">ROLE:</span>
+                            <span class="text-white"> Strategic_KAM</span>
+                        </div>
+                        <div>
+                            <span class="text-cyan-400">ORG:</span>
+                            <span class="text-white"> Meituan</span>
+                        </div>
+                        <div>
+                            <span class="text-cyan-400">STATUS:</span>
+                            <span class="text-green-400">ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-gray-400 max-w-lg leading-relaxed text-lg" data-i18n="hero_desc">
+                    飞过全球航线，干过渠道拓展，现在在美团做战略大客户销售。<br>
+                    正在积极使用AI工具提效，让销售更高效，让数据驱动决策。
+                </p>
+
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <a href="#timeline" class="cyber-btn px-8 py-3 rounded font-mono" data-i18n="hero_btn1">
+                        > 查看执行日志
+                    </a>
+                    <a href="#ai-lab" class="px-8 py-3 border border-purple-500 text-purple-400 rounded font-mono hover:bg-purple-500 hover:text-black transition-all" data-i18n="hero_btn2">
+                        > AI实战记录
+                    </a>
+                </div>
+            </div>
+
+            <!-- 右侧：数字身份可视化（替代头像） -->
+            <div class="flex justify-center items-center">
+                <div class="digital-identity">
+                    <!-- 轨道环 -->
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    
+                    <!-- 核心数据 -->
+                    <div class="core-data">
+                        <div class="w-48 h-48 rounded-full holo-card flex items-center justify-center relative overflow-hidden">
+                            <img src="images/avatar.png" alt="头像" class="w-full h-full object-contain rounded-full">
+                            <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center text-black text-sm font-bold animate-pulse">
+                                AI
+                            </div>
+                        </div>
+                        <div class="mt-4 font-mono text-cyan-400 text-sm tracking-widest">DAVID_JIA_V2.0</div>
+                    </div>
+
+                    <!-- 漂浮数据点 -->
+                    <div class="data-matrix" style="left: 10%; top: 20%; animation-delay: 0s;">01001</div>
+                    <div class="data-matrix" style="right: 15%; top: 30%; animation-delay: 1s;">10110</div>
+                    <div class="data-matrix" style="left: 20%; bottom: 25%; animation-delay: 2s;">01101</div>
+                    <div class="data-matrix" style="right: 10%; bottom: 30%; animation-delay: 0.5s;">10011</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 滚动提示 -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 font-mono text-cyan-400 text-sm animate-bounce">
+            [SCROLL_DOWN]
+        </div>
+    </section>
+
+    <!-- 时间轴 - 终端风格 -->
+    <section id="timeline" class="py-32 px-6 relative">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-16">
+                <div class="font-mono text-cyan-400 text-sm mb-2">[02] EXECUTION_LOG</div>
+                <h2 class="text-4xl md:text-5xl font-bold neon-text" data-i18n="timeline_title">执行日志</h2>
+            </div>
+
+            <div class="space-y-8 font-mono">
+                <!-- 美团 -->
+                <div class="terminal-line holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="terminal-prompt">root@meituan:~$</span>
+                        <span class="text-gray-500 text-sm">2018.05 - PRESENT</span>
+                    </div>
+                    <div class="terminal-command text-xl mb-2 text-white" data-i18n="meituan_role">execute_role --position="战略大客户经理" --org="美团"</div>
+                    <div class="terminal-output text-gray-400 mb-3" data-i18n="meituan_desc">
+                        > 负责头部大型连锁餐饮品牌的线上合作拓展<br>
+                        > 深耕本地生活近8年，具备丰富的客户服务经验<br>
+                        > 用AI做客户洞察，搭建销售辅助工具提效
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 text-xs border border-cyan-400/30" data-i18n="tag_key_account">大客户销售</span>
+                        <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 text-xs border border-cyan-400/30" data-i18n="tag_ai_app">AI应用</span>
+                        <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 text-xs border border-cyan-400/30" data-i18n="tag_local_life">本地生活</span>
+                    </div>
+                </div>
+
+                <!-- 携程 -->
+                <div class="terminal-line holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="terminal-prompt">root@ctrip:~$</span>
+                        <span class="text-gray-500 text-sm">2017.07 - 2018.05</span>
+                    </div>
+                    <div class="terminal-command text-xl mb-2 text-white" data-i18n="ctrip_role">execute_role --position="大客户经理" --org="携程商旅"</div>
+                    <div class="terminal-output text-gray-400 mb-3" data-i18n="ctrip_desc">
+                        > 负责Fortune 500企业客户的商旅服务，建立长期合作关系<br>
+                        > 设计定制化差旅方案，帮客户优化差旅产品组合<br>
+                        > 从机票拓展到酒店用车多产品，挖掘增量机会，维护并提升客户交易量
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 rounded bg-blue-400/10 text-blue-400 text-xs border border-blue-400/30" data-i18n="tag_corp_travel">企业差旅</span>
+                        <span class="px-2 py-1 rounded bg-blue-400/10 text-blue-400 text-xs border border-blue-400/30" data-i18n="tag_customer_success">客户成功</span>
+                        <span class="px-2 py-1 rounded bg-blue-400/10 text-blue-400 text-xs border border-blue-400/30" data-i18n="tag_cost_opt">成本优化</span>
+                    </div>
+                </div>
+
+                <!-- 喜乐航 -->
+                <div class="terminal-line holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="terminal-prompt">root@happyair:~$</span>
+                        <span class="text-gray-500 text-sm">2016.12 - 2017.05</span>
+                    </div>
+                    <div class="terminal-command text-xl mb-2 text-white" data-i18n="happyair_role">execute_role --position="渠道经理" --org="喜乐航"</div>
+                    <div class="terminal-output text-gray-400 mb-3" data-i18n="happyair_desc">
+                        > 主导海航系航空公司机上免税购物渠道开发，提升机上零售体验<br>
+                        > 分析机上产品销售数据，优化供应和渠道，提高收入<br>
+                        > 负责机上人员培训，确保服务标准和免税产品推广能力
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 rounded bg-green-400/10 text-green-400 text-xs border border-green-400/30" data-i18n="tag_aviation_retail">航空零售</span>
+                        <span class="px-2 py-1 rounded bg-green-400/10 text-green-400 text-xs border border-green-400/30" data-i18n="tag_channel_exp">渠道拓展</span>
+                        <span class="px-2 py-1 rounded bg-green-400/10 text-green-400 text-xs border border-green-400/30" data-i18n="tag_duty_free">免税业务</span>
+                    </div>
+                </div>
+
+                <!-- 阿联酋航空 -->
+                <div class="terminal-line holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="terminal-prompt">root@emirates:~$</span>
+                        <span class="text-gray-500 text-sm">2012.09 - 2016.09</span>
+                    </div>
+                    <div class="terminal-command text-xl mb-2 text-white" data-i18n="emirates_role">execute_role --position="商务舱空乘" --org="阿联酋航空"</div>
+                    <div class="terminal-output text-gray-400 mb-3" data-i18n="emirates_desc">
+                        > 与全球120多个国家同事协作，培养跨文化沟通能力<br>
+                        > 策划机上免税品销售方案，通过创新营销提升销售额<br>
+                        > 处理客户投诉与紧急事件，维护客户满意度和品牌形象
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 rounded bg-yellow-400/10 text-yellow-400 text-xs border border-yellow-400/30" data-i18n="tag_cross_culture">跨文化交流</span>
+                        <span class="px-2 py-1 rounded bg-yellow-400/10 text-yellow-400 text-xs border border-yellow-400/30" data-i18n="tag_premium_service">高端服务</span>
+                        <span class="px-2 py-1 rounded bg-yellow-400/10 text-yellow-400 text-xs border border-yellow-400/30" data-i18n="tag_crisis_mgmt">危机处理</span>
+                    </div>
+                </div>
+
+                <!-- Fasco -->
+                <div class="terminal-line holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="terminal-prompt">root@fasco:~$</span>
+                        <span class="text-gray-500 text-sm">2010.08 - 2012.08</span>
+                    </div>
+                    <div class="terminal-command text-xl mb-2 text-white" data-i18n="fasco_role">execute_role --position="空乘招聘官" --org="北京Fasco"</div>
+                    <div class="terminal-output text-gray-400 mb-3" data-i18n="fasco_desc">
+                        > 为阿联酋、汉莎、韩亚等外航策划并执行定制化招聘方案<br>
+                        > 两年组织11场全国性大型招聘活动，完成客户在华招聘计划<br>
+                        > 负责招聘广告策划、渠道优化及户外推广活动执行
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 rounded bg-pink-400/10 text-pink-400 text-xs border border-pink-400/30" data-i18n="tag_airline_recruit">外航招聘</span>
+                        <span class="px-2 py-1 rounded bg-pink-400/10 text-pink-400 text-xs border border-pink-400/30" data-i18n="tag_event_exec">活动执行</span>
+                        <span class="px-2 py-1 rounded bg-pink-400/10 text-pink-400 text-xs border border-pink-400/30" data-i18n="tag_talent_select">人才甄选</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 战绩数据墙 -->
+    <section id="achievements" class="py-32 px-6 bg-black/50 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <div class="font-mono text-cyan-400 text-sm mb-2">[03] ACHIEVEMENT_DATA</div>
+                <h2 class="text-4xl md:text-5xl font-bold neon-text" data-i18n="achievements_title">战绩数据</h2>
+            </div>
+
+            <!-- 数据筛选 -->
+            <div class="flex gap-4 mb-12 font-mono">
+                <button onclick="filterData('sales')" class="filter-btn active px-6 py-2 rounded border border-cyan-400 bg-cyan-400/20 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all" data-category="sales" data-i18n="btn_sales">
+                    [SALES_DATA]
+                </button>
+                <button onclick="filterData('contribution')" class="filter-btn px-6 py-2 rounded border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black transition-all" data-category="contribution" data-i18n="btn_contribution">
+                    [CONTRIBUTION_LOG]
+                </button>
+            </div>
+
+            <!-- 数据卡片网格 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="data-grid">
+                <!-- 销售数据 - 图片展示 -->
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/2025年AI产品销售成绩.jpg" alt="2025年AI产品销售成绩" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_001.SALES</span>
+                        <div class="text-xl font-bold neon-text">2025年AI产品销售成绩</div>
+                        <div class="text-gray-400 text-sm mt-1">AI产品销售突破</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/年框广告签约.png" alt="年框广告签约" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_002.SALES</span>
+                        <div class="text-xl font-bold neon-text">年框广告签约</div>
+                        <div class="text-gray-400 text-sm mt-1">战略合作成果</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/广告冲锋项目第二名.jpg" alt="广告冲锋项目第二名" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_003.SALES</span>
+                        <div class="text-xl font-bold neon-text">广告冲锋项目第二名</div>
+                        <div class="text-gray-400 text-sm mt-1">项目攻坚荣誉</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/管理储备公示.jpg" alt="管理储备公示" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_004.SALES</span>
+                        <div class="text-xl font-bold neon-text">管理储备公示</div>
+                        <div class="text-gray-400 text-sm mt-1">人才发展认可</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/年度执行力战士.png" alt="年度执行力战士" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_005.SALES</span>
+                        <div class="text-xl font-bold neon-text">年度执行力战士</div>
+                        <div class="text-gray-400 text-sm mt-1">美团年度荣誉表彰</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer" data-category="sales">
+                    <img src="./images/年度营销战役第二名.jpg" alt="年度营销战役第二名" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-cyan-400 mb-2">FILE_006.SALES</span>
+                        <div class="text-xl font-bold neon-text">年度营销战役第二名</div>
+                        <div class="text-gray-400 text-sm mt-1">营销战役荣誉</div>
+                    </div>
+                </div>
+
+                <!-- 贡献数据 -->
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer hidden" data-category="contribution">
+                    <img src="./images/平台年度产品体验官.jpg" alt="平台年度产品体验官" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-purple-400 mb-2">FILE_001.CONTRIB</span>
+                        <div class="text-xl font-bold neon-purple">平台年度产品体验官</div>
+                        <div class="text-gray-400 text-sm mt-1">流程效率提升</div>
+                    </div>
+                </div>
+
+                <div class="data-card holo-card rounded-lg overflow-hidden aspect-[3/4] relative group cursor-pointer hidden" data-category="contribution">
+                    <img src="./images/用户评价分析系统.jpg" alt="用户评价分析系统" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span class="font-mono text-xs text-purple-400 mb-2">FILE_002.CONTRIB</span>
+                        <div class="text-xl font-bold neon-purple">用户评价分析系统</div>
+                        <div class="text-gray-400 text-sm mt-1">AI销售工具试点</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI实战记录 -->
+    <section id="ai-lab" class="py-32 px-6 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16">
+                <div class="font-mono text-cyan-400 text-sm mb-2">[04] AI_LABORATORY</div>
+                <h2 class="text-4xl md:text-5xl font-bold neon-text" data-i18n="ailab_title">AI实战记录</h2>
+            </div>
+
+            <!-- 技能矩阵 -->
+            <div class="holo-card rounded-2xl p-8 mb-12">
+                <h3 class="text-xl font-bold mb-8 flex items-center gap-3 font-mono">
+                    <span class="text-cyan-400">></span>
+                    <span data-i18n="skill_matrix_title">SKILL_MATRIX.exe</span>
+                </h3>
+                
+                <div class="grid md:grid-cols-3 gap-8 font-mono">
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400" data-i18n="skill_ai_tools">AI_TOOLS</span>
+                            <span class="text-cyan-400">85%</span>
+                        </div>
+                        <div class="h-2 ai-skill-bar rounded-full">
+                            <div class="h-full ai-skill-fill rounded-full" style="width: 85%"></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">ChatGPT</span>
+                            <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">Gemini</span>
+                            <span class="px-2 py-1 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">NotebookLM</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400" data-i18n="skill_vibe_coding">Vibing_Coding</span>
+                            <span class="text-purple-400">70%</span>
+                        </div>
+                        <div class="h-2 ai-skill-bar rounded-full border-purple-400/30">
+                            <div class="h-full ai-skill-fill rounded-full bg-gradient-to-r from-purple-400 to-pink-400" style="width: 70%"></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="px-2 py-1 rounded bg-purple-400/10 text-purple-400 border border-purple-400/20">No Code</span>
+                            <span class="px-2 py-1 rounded bg-purple-400/10 text-purple-400 border border-purple-400/20">Trae</span>
+                            <span class="px-2 py-1 rounded bg-purple-400/10 text-purple-400 border border-purple-400/20">Enter</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400" data-i18n="skill_ai_workflow">AI_WORKFLOW</span>
+                            <span class="text-green-400">75%</span>
+                        </div>
+                        <div class="h-2 ai-skill-bar rounded-full border-green-400/30">
+                            <div class="h-full ai-skill-fill rounded-full bg-gradient-to-r from-green-400 to-cyan-400" style="width: 75%"></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="px-2 py-1 rounded bg-green-400/10 text-green-400 border border-green-400/20">Cozy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No-Code项目展示 -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="holo-card rounded-xl p-6 group hover:border-cyan-400 transition-all">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded bg-cyan-400/20 flex items-center justify-center text-cyan-400 font-mono text-lg">🤖</div>
+                            <div>
+                                <div class="font-bold" data-i18n="project1_name">Sales_GPT_Assistant</div>
+                                <div class="text-xs text-gray-500 font-mono">v1.2.0 | PRODUCTION</div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 rounded bg-green-400/20 text-green-400 text-xs font-mono">ONLINE</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed" data-i18n="project1_desc">
+                        基于ChatGPT的销售辅助工具，根据当日客户场景，自动生成个性化销售话术。
+                    </p>
+                    <div class="flex gap-2 mb-4 font-mono text-xs">
+                        <span class="px-2 py-1 rounded bg-gray-800 text-gray-400">OpenAI</span>
+                        
+                    </div>
+                    <div class="h-1 w-full bg-gray-800 rounded overflow-hidden">
+                        <div class="h-full bg-cyan-400 w-full animate-pulse"></div>
+                    </div>
+                </div>
+
+                <div class="holo-card rounded-xl p-6 group hover:border-purple-400 transition-all">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded bg-purple-400/20 flex items-center justify-center text-purple-400 font-mono text-lg">📊</div>
+                            <div>
+                                <div class="font-bold" data-i18n="project2_name">Client_Insight_Analysis</div>
+                                <div class="text-xs text-gray-500 font-mono">v0.9.0 | BETA</div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 rounded bg-yellow-400/20 text-yellow-400 text-xs font-mono">ONLINE</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed" data-i18n="project2_desc">
+                        整合多数据源的用户评分系统，利用AI分析用户语义，提供个性化的用户评分和分析报告。
+                    </p>
+                    <div class="flex gap-2 mb-4 font-mono text-xs">
+                        <span class="px-2 py-1 rounded bg-gray-800 text-gray-400">Meituan No Code</span>
+                        <span class="px-2 py-1 rounded bg-gray-800 text-gray-400">Kimi</span>
+                        <span class="px-2 py-1 rounded bg-gray-800 text-gray-400">ChatGPT</span>
+                    </div>
+                    <div class="h-1 w-full bg-gray-800 rounded overflow-hidden">
+                        <div class="h-full bg-purple-400 w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习日志 -->
+            <div class="mt-12 holo-card rounded-xl p-6">
+                <h3 class="text-lg font-bold mb-6 font-mono flex items-center gap-2">
+                    <span class="text-cyan-400">></span>
+                    <span data-i18n="learning_log_title">LEARNING_LOG.txt</span>
+                </h3>
+                <div class="space-y-4 font-mono text-sm">
+                    <div class="flex gap-4">
+                        <span class="text-gray-500 w-24">[2024.04]</span>
+                        <span class="text-cyan-400">INIT</span>
+                        <span class="text-gray-400" data-i18n="log1">加入WayToAGI社群，开始系统学习Prompt及Cozy造Bot</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-gray-500 w-24">[2025.06]</span>
+                        <span class="text-purple-400">BUILD</span>
+                        <span class="text-gray-400" data-i18n="log2">完成首个No-Code产品原型-用户评价分析系统</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-gray-500 w-24">[2026.01]</span>
+                        <span class="text-green-400">DEPLOY</span>
+                        <span class="text-gray-400" data-i18n="log3">学习Vibe Coding及Skills</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系 -->
+    <section class="py-32 px-6 bg-black/80 relative">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="font-mono text-cyan-400 text-sm mb-4">[05] CONNECT</div>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 neon-text" data-i18n="connect_title">建立连接</h2>
+            <p class="text-gray-400 mb-12 font-mono" data-i18n="connect_desc">等待输入...</p>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="mailto:chiawei0228@gmail.com" class="holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">📧</div>
+                    <div class="font-mono text-cyan-400">EMAIL</div>
+                    <div class="text-xs text-gray-500 mt-1">chiawei0228@gmail.com</div>
+                </a>
+                <a href="https://www.linkedin.com/in/wei-jia-3a8028130/" target="_blank" class="holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">💼</div>
+                    <div class="font-mono text-cyan-400">LINKEDIN</div>
+                    <div class="text-xs text-gray-500 mt-1">/in/wei-jia</div>
+                </a>
+                <a href="#" class="holo-card rounded-lg p-6 group hover:border-cyan-400 transition-all">
+                    <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">�</div>
+                    <div class="font-mono text-cyan-400">WECHAT</div>
+                    <div class="text-xs text-gray-500 mt-1">18813066325</div>
+                </a>
+            </div>
+
+            <div class="mt-16 font-mono text-xs text-gray-600">
+                <span class="text-cyan-400">SYSTEM</span> :: David Jia Portfolio v2.4 | Compiled with AI
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 多语言翻译数据
+        const translations = {
+            zh: {
+                nav_profile: '[01] 身份识别',
+                nav_timeline: '[02] 执行日志',
+                nav_achievements: '[03] 战绩数据',
+                nav_ailab: '[04] AI实战记录',
+                hero_title: '万米高空服务者',
+                hero_subtitle1: '→ 互联网销售',
+                hero_subtitle2: '→ AI应用探索者',
+                hero_params: '// 核心参数',
+                hero_desc: '飞过全球航线，干过渠道拓展，现在在美团做战略大客户销售。<br>正在积极使用AI工具提效，让销售更高效，让数据驱动决策。',
+                hero_btn1: '> 查看执行日志',
+                hero_btn2: '> AI实战记录',
+                timeline_title: '执行日志',
+                meituan_role: 'execute_role --position="战略大客户经理" --org="美团"',
+                meituan_desc: '> 负责头部大型连锁餐饮品牌的线上合作拓展<br>> 深耕本地生活近8年，具备丰富的客户服务经验<br>> 用AI做客户洞察，搭建销售辅助工具提效',
+                tag_key_account: '大客户销售',
+                tag_ai_app: 'AI应用',
+                tag_local_life: '本地生活',
+                ctrip_role: 'execute_role --position="大客户经理" --org="携程商旅"',
+                ctrip_desc: '> 负责Fortune 500企业客户的商旅服务，建立长期合作关系<br>> 设计定制化差旅方案，帮客户优化差旅产品组合<br>> 从机票拓展到酒店用车多产品，挖掘增量机会，维护并提升客户交易量',
+                tag_corp_travel: '企业差旅',
+                tag_customer_success: '客户成功',
+                tag_cost_opt: '成本优化',
+                happyair_role: 'execute_role --position="渠道经理" --org="喜乐航"',
+                happyair_desc: '> 主导海航系航空公司机上免税购物渠道开发，提升机上零售体验<br>> 分析机上产品销售数据，优化供应和渠道，提高收入<br>> 负责机上人员培训，确保服务标准和免税产品推广能力',
+                tag_aviation_retail: '航空零售',
+                tag_channel_exp: '渠道拓展',
+                tag_duty_free: '免税业务',
+                emirates_role: 'execute_role --position="商务舱空乘" --org="阿联酋航空"',
+                emirates_desc: '> 与全球120多个国家同事协作，培养跨文化沟通能力<br>> 策划机上免税品销售方案，通过创新营销提升销售额<br>> 处理客户投诉与紧急事件，维护客户满意度和品牌形象',
+                tag_cross_culture: '跨文化交流',
+                tag_premium_service: '高端服务',
+                tag_crisis_mgmt: '危机处理',
+                fasco_role: 'execute_role --position="空乘招聘官" --org="北京Fasco"',
+                fasco_desc: '> 为阿联酋、汉莎、韩亚等外航策划并执行定制化招聘方案<br>> 两年组织11场全国性大型招聘活动，完成客户在华招聘计划<br>> 负责招聘广告策划、渠道优化及户外推广活动执行',
+                tag_airline_recruit: '外航招聘',
+                tag_event_exec: '活动执行',
+                tag_talent_select: '人才甄选',
+                achievements_title: '战绩数据',
+                btn_sales: '[SALES_DATA]',
+                btn_contribution: '[CONTRIBUTION_LOG]',
+                ailab_title: 'AI实战记录',
+                skill_matrix_title: 'SKILL_MATRIX.exe',
+                skill_ai_tools: 'AI_TOOLS',
+                skill_vibe_coding: 'Vibing_Coding',
+                skill_ai_workflow: 'AI_WORKFLOW',
+                project1_name: 'Sales_GPT_Assistant',
+                project1_desc: '基于ChatGPT的销售辅助工具，根据当日客户场景，自动生成个性化销售话术。',
+                project2_name: 'Client_Insight_Analysis',
+                project2_desc: '整合多数据源的用户评分系统，利用AI分析用户语义，提供个性化的用户评分和分析报告。',
+                learning_log_title: 'LEARNING_LOG.txt',
+                log1: '加入WayToAGI社群，开始系统学习Prompt及Cozy造Bot',
+                log2: '完成首个No-Code产品原型-用户评价分析系统',
+                log3: '学习Vibe Coding及Skills',
+                connect_title: '建立连接',
+                connect_desc: '等待输入...'
+            },
+            en: {
+                nav_profile: '[01] Profile',
+                nav_timeline: '[02] Timeline',
+                nav_achievements: '[03] Achievements',
+                nav_ailab: '[04] AI Projects',
+                hero_title: 'Sky Service Expert',
+                hero_subtitle1: '→ Internet Sales',
+                hero_subtitle2: '→ AI Explorer',
+                hero_params: '// Core Parameters',
+                hero_desc: 'Flew global routes, expanded channels, now working as Strategic Key Account Manager at Meituan.<br>Actively using AI tools to boost efficiency and drive data-driven decisions.',
+                hero_btn1: '> View Timeline',
+                hero_btn2: '> AI Projects',
+                timeline_title: 'Timeline',
+                meituan_role: 'execute_role --position="Strategic KAM" --org="Meituan"',
+                meituan_desc: '> Lead online partnership expansion for top chain restaurant brands<br>> 8+ years in local lifestyle sector with rich client service experience<br>> Use AI for customer insights, build sales tools for efficiency',
+                tag_key_account: 'Key Account',
+                tag_ai_app: 'AI Application',
+                tag_local_life: 'Local Lifestyle',
+                ctrip_role: 'execute_role --position="Key Account Manager" --org="Ctrip BizTravel"',
+                ctrip_desc: '> Manage corporate travel services for Fortune 500 clients<br>> Design customized travel solutions, optimize product portfolio<br>> Expand from flights to hotels and car services, grow transaction volume',
+                tag_corp_travel: 'Corporate Travel',
+                tag_customer_success: 'Customer Success',
+                tag_cost_opt: 'Cost Optimization',
+                happyair_role: 'execute_role --position="Channel Manager" --org="HappyAir"',
+                happyair_desc: '> Lead duty-free channel development for HNA airlines<br>> Analyze inflight sales data, optimize supply and channels<br>> Train crew on service standards and duty-free promotion',
+                tag_aviation_retail: 'Aviation Retail',
+                tag_channel_exp: 'Channel Expansion',
+                tag_duty_free: 'Duty Free',
+                emirates_role: 'execute_role --position="Business Class Crew" --org="Emirates"',
+                emirates_desc: '> Collaborate with colleagues from 120+ countries<br>> Plan inflight duty-free sales programs, boost revenue<br>> Handle complaints and emergencies, maintain brand image',
+                tag_cross_culture: 'Cross-Culture',
+                tag_premium_service: 'Premium Service',
+                tag_crisis_mgmt: 'Crisis Management',
+                fasco_role: 'execute_role --position="Cabin Crew Recruiter" --org="Beijing Fasco"',
+                fasco_desc: '> Design and execute recruitment plans for foreign airlines<br>> Organized 11 national recruitment events in 2 years<br>> Manage recruitment ads, channels and outdoor promotions',
+                tag_airline_recruit: 'Airline Recruitment',
+                tag_event_exec: 'Event Execution',
+                tag_talent_select: 'Talent Selection',
+                achievements_title: 'Achievements',
+                btn_sales: '[SALES_DATA]',
+                btn_contribution: '[CONTRIBUTION_LOG]',
+                ailab_title: 'AI Projects',
+                skill_matrix_title: 'SKILL_MATRIX.exe',
+                skill_ai_tools: 'AI_TOOLS',
+                skill_vibe_coding: 'Vibe_Coding',
+                skill_ai_workflow: 'AI_WORKFLOW',
+                project1_name: 'Sales_GPT_Assistant',
+                project1_desc: 'ChatGPT-based sales assistant that generates personalized sales scripts based on daily customer scenarios.',
+                project2_name: 'Client_Insight_Analysis',
+                project2_desc: 'Multi-source user rating system using AI semantic analysis to provide personalized user ratings and analysis reports.',
+                learning_log_title: 'LEARNING_LOG.txt',
+                log1: 'Joined WayToAGI community, started learning Prompt and Cozy Bot building',
+                log2: 'Completed first No-Code product prototype - User Review Analysis System',
+                log3: 'Learning Vibe Coding and Skills',
+                connect_title: 'Connect',
+                connect_desc: 'Waiting for input...'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.getElementById('lang-toggle').textContent = currentLang === 'zh' ? 'EN' : '中文';
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.value = translations[currentLang][key];
+                    } else {
+                        el.innerHTML = translations[currentLang][key];
+                    }
+                }
+            });
+
+            // 更新glitch效果的data-text属性
+            const glitchEl = document.querySelector('.glitch');
+            if (glitchEl) {
+                glitchEl.setAttribute('data-text', translations[currentLang].hero_title);
+            }
+        }
+
+        // 动画初始化
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 终端行入场动画
+        gsap.utils.toArray('.terminal-line').forEach((line, i) => {
+            gsap.from(line, {
+                scrollTrigger: {
+                    trigger: line,
+                    start: 'top 85%',
+                },
+                x: -50,
+                opacity: 0,
+                duration: 0.6,
+                delay: i * 0.1,
+                ease: 'power3.out'
+            });
+        });
+
+        // 数据卡片入场
+        gsap.utils.toArray('.data-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.5,
+                delay: i * 0.1,
+                ease: 'power2.out'
+            });
+        });
+
+        // 筛选功能
+        function filterData(category) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.data-card');
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.add('bg-cyan-400/20', 'text-cyan-400', 'border-cyan-400');
+                    btn.classList.remove('text-purple-400', 'border-purple-400');
+                } else {
+                    btn.classList.remove('bg-cyan-400/20', 'text-cyan-400', 'border-cyan-400');
+                    btn.classList.add('text-purple-400', 'border-purple-400');
+                }
+            });
+            
+            cards.forEach(card => {
+                if (card.dataset.category === category) {
+                    card.classList.remove('hidden');
+                    gsap.fromTo(card, {opacity: 0, scale: 0.9}, {opacity: 1, scale: 1, duration: 0.3});
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(5, 5, 8, 0.95)';
+            } else {
+                nav.style.background = 'rgba(5, 5, 8, 0.8)';
+            }
+        });
+    </script>
+</body>
+</html>
